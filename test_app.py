@@ -5,7 +5,13 @@ import os
 import plotly.express as px
 from  utils import *
 
-
+def add_histogram(dataframe, x_axis):
+    fig = px.histogram(dataframe, x=x_axis, 
+                       title=f'{x_axis} Distribution',
+                       width = 800,
+                       height = 600)
+    fig.update_layout(xaxis_title=x_axis.capitalize(), yaxis_title='# of Houses')
+    return fig
 
 def main():
     st.title('Pakistan Residential Electricity Consumption Dataset  \n An In Depth Anlysis')
@@ -13,6 +19,7 @@ def main():
     st.sidebar.title('Table of Contents')
     st.sidebar.markdown("""
                         - [Meta Data Preview](#meta-data-preview)
+                        - [Distribution of Houses wrt Various Variables](#distribution-of-houses-wrt-various-variables)
                         - [Precon House Data](#precon-house-data)
                         """)
     
@@ -23,6 +30,7 @@ def main():
     # Read data from a default path (change the path accordingly)
     metadata_path = "data/Metadata.csv"  # Update this with your file path
     df = pd.read_csv(metadata_path)
+    df.rename(columns={'Website Name': 'House_Name'}, inplace=True)
     
     precon_path = 'data/PRECON'
     precon_house_data = os.listdir(precon_path)
@@ -34,12 +42,22 @@ def main():
     # Select columns for scatter plot of meta data
     st.write('Relation between different variables of the meta data')
     columns = df.columns.tolist()
-    x_axis = st.selectbox("Select X-axis data:", columns, index=0)
-    y_axis = st.selectbox("Select Y-axis data:", columns, index=1)
-    
+    x_axis = st.selectbox("Select X-axis variable for Scatter Plot:", columns, index=0)
+    y_axis = st.selectbox("Select Y-axis variable for Scatter Plot:", columns, index=1)
     fig = add_scatter_plot(df, x_axis, y_axis)
     st.plotly_chart(fig)
 
+    # Plot histograms of metadata variables
+    st.header('Distribution of Houses wrt Various Variables')
+    x_axis = st.selectbox("Select X-axis variable for Histogram:", columns, index=0)
+
+    # fig = add_histograms_generic(df, columns[1:], (14,2))
+    fig = add_histogram(df, x_axis)
+    st.plotly_chart(fig)
+
+
+    
+    ############################## Precon House Analysis #########################
     
     st.header('Precon House Data')
     house_name = st.selectbox('Select a house to plot:', precon_house_names, index=0)
@@ -60,8 +78,8 @@ def main():
                    x='Date_Time',
                    y=selected_variable,
                    title=f'{selected_variable} over Time',
-                   width=1200,
-                   height=900)
+                   width=800,
+                   height=600)
     fig.update_xaxes(rangeslider_visible=True, tickmode='auto', nticks=100)  # Enable the range slider for x-axis
 
     # Show the Plotly figure using Streamlit's Plotly support
@@ -73,5 +91,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

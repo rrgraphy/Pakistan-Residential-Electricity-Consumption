@@ -11,6 +11,43 @@ import zipfile
 import os
 import requests
 import zipfile
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
+
+def add_histograms_generic(df, variables, grid_size):
+    # Calculating number of subplots needed
+    num_plots = len(variables)
+
+    # Creating subplots for histograms
+    figs = []
+    for var in variables:
+        fig = go.Histogram(x = df[var])
+        figs.append(fig)
+
+    # Creating a subplot grid
+    rows, cols = grid_size
+    fig_subplots = make_subplots(rows=rows, cols=cols, subplot_titles=variables)
+
+    row = 1
+    col = 1
+    for i, fig in enumerate(figs):
+        # fig_subplots.add_trace(fig['data'][0], row=row, col=col)
+        fig_subplots.add_trace(fig, row=row, col=col)
+        if col < cols:
+            col += 1
+        else:
+            col = 1
+            row += 1
+
+    # Update layout for better presentation
+    fig_subplots.update_layout(height=300 * rows, width=400 * cols, title_text='Histograms of Variables')
+
+    return fig_subplots
+
+
 
 def add_scatter_plot(df, x_axis, y_axis):
 
