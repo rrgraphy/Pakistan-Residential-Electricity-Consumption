@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import plotly.express as px
-
+import numpy as np
 import os
 import requests
 import zipfile
@@ -76,7 +76,7 @@ def get_house_data(root_dir, house_name, sampling_frequency):
 
     # Create a new DataFrame by resampling based on the specified interval
     sampled_precon_house = precon_house.resample(sampling_frequency, on='Date_Time').mean().reset_index()
-    return sampled_precon_house
+    return sampled_precon_house, precon_house
 
 
 def check_and_download_data():
@@ -114,4 +114,59 @@ def check_and_download_data():
         print("Files downloaded, PRECON directory extracted, and zip file deleted.")
     else:
         print("Metadata.csv and PRECON directory already exist.")
+
+
+def get_month_wise_stats(precon_house):
+    df_variables = precon_house.columns[2:] if len(precon_house.columns) > 2 else precon_house.columns[1:]
+    # print (f'df_variables: {df_variables}')
+    figs = []
+    energies = []
+    for variable in df_variables:
+        # print (f'variable: {str(variable)}')
+        power_curve = precon_house[str(variable)]
+        power_curve =  power_curve.to_numpy()
+        total_energy = np.trapz(power_curve)/60
+        # print (total_energy)
+        energies.append(total_energy)
+
+
+    
+    fig = px.pie(values=energies, names=df_variables, title='Energy Consumption by Appliances through out the year (kWh)')
+    figs.append(fig)
+
+    months = [1,2,3,4,5,6,7,8,9,10,11,12]
+    months_dict = {
+    1: "January",
+    2: "February",
+    3: "March",
+    4: "April",
+    5: "May",
+    6: "June",
+    7: "July",
+    8: "August",
+    9: "September",
+    10: "October",
+    11: "November",
+    12: "December"
+    }
+
+    
+
+    for desired_month in months:
+        filtered_df = precon_house[precon_house['Date_Time'].dt.month == desired_month]
+    
+        # print (df_variables)
+        energies = []
+        for variable in df_variables:
+            # print (f'variable: {str(variable)}')
+            power_curve = filtered_df[str(variable)]
+            power_curve =  power_curve.to_numpy()
+            total_energy = (np.trapz(power_curve))/60 #the resulting energy will be ub kW-minutes. to get energy in kWh, we divide by 60
+            # print (total_energy)
+            energies.append(total_energy)
+
+        fig = px.pie(values=energies, names=df_variables, title=f'Energy Consumption by Appliances through  {months_dict[desired_month]} (kWh)')
+        figs.append(fig)
+
+    return figs
 

@@ -66,7 +66,7 @@ def main():
                                     ['10M', '1H', '3H', '6H', '9H', '12H'],
                                     index = 5)
                                                                      
-    sampled_precon_house = get_house_data(root_dir=precon_path,
+    sampled_precon_house, precon_house = get_house_data(root_dir=precon_path,
                                           house_name=house_name,
                                           sampling_frequency=sampling_frequency)
 
@@ -85,6 +85,12 @@ def main():
     # Show the Plotly figure using Streamlit's Plotly support
     st.plotly_chart(fig)
 
+    st.write(f'### Mothly and Yearly consumption of  {house_name}')
+    figs = get_month_wise_stats(precon_house)
+    for fig_ in figs:
+        st.plotly_chart(fig_)
+
+    ############################################################################################
 
 
 
