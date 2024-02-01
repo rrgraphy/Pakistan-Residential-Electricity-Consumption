@@ -8,9 +8,10 @@ PRECON is a first of its kind extensive dataset of electricity consumption patte
 The dataset and paper can be found [here](https://web.lums.edu.pk/~eig/precon.html)
 
 # Analysis
-An exploratory data analysis is conducted in this code base and hosted in the form of an streamlit app.
+An exploratory data analysis is conducted in this code base and hosted in the form of an streamlit app which can be accessed [here](https://precon.streamlit.app/).  
+  
 It covers:
-
+  
 - Dataset variables overview  
   
 <p align="center">
@@ -48,5 +49,16 @@ It covers:
 </p>
 
 
+## Citation
+
+If you find this repository useful, please consider citing it:
+
+```bibtex
+@misc{author2024,
+  title = {Pakistan Residential Electricity Consumption},
+  author = {Ghulam Jilani Raza},
+  year = {2024},
+  howpublished = {\url{https://github.com/gj-raza/Pakistan-Residential-Electricity-Consumption}},
+}
 
 
